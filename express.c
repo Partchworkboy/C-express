@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sqlite3.h>
-#include <cdk/cdk.h>
 
 // SQLite database connection
 sqlite3* db;
@@ -10,25 +9,25 @@ sqlite3* db;
 // Function to initialize the SQLite database
 void initializeDatabase() {
     int rc;
-    
+
     rc = sqlite3_open("data.db", &db);
-    
+
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
         exit(1);
     }
-    
+
     // Create necessary tables if they don't exist
     char* createDepositsTable = "CREATE TABLE IF NOT EXISTS deposits (id INTEGER PRIMARY KEY, name TEXT, date TEXT, amount REAL, notes TEXT);";
     rc = sqlite3_exec(db, createDepositsTable, 0, 0, 0);
-    
+
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
         exit(1);
     }
-    
+
     // Add additional create table statements for other data types if needed
 }
 
@@ -96,34 +95,27 @@ void handleLoansForm() {
     printf("Enter notes: ");
     fgets(notes, sizeof(notes), stdin);
     notes[strcspn(notes, "\n")] = '\0';
-    
+
     // Validate form data (add your validation logic here)
     if (strlen(name) == 0 || strlen(date) == 0 || amount <= 0) {
         printf("Invalid form data. Please try again.\n");
         return;
-
     }
-// Code to insert the Loans data into the SQLite database
-char insertQuery[1000];
-sprintf(insertQuery, "INSERT INTO loans (name, date, amount, notes) VALUES ('%s', '%s', %.2f, '%s');",
-        name, date, amount, notes);
 
-int rc = sqlite3_exec(db, insertQuery, 0, 0, 0);
+    // Code to insert the Loans data into the SQLite database
+    char insertQuery[1000];
+    sprintf(insertQuery, "INSERT INTO loans (name, date, amount, notes) VALUES ('%s', '%s', %.2f, '%s');",
+            name, date, amount, notes);
 
-if (rc != SQLITE_OK) {
-    fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
-    sqlite3_close(db);
-    exit(1);
-}
+    int rc = sqlite3_exec(db, insertQuery, 0, 0, 0);
 
-printf("Loans data inserted successfully.\n");
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        exit(1);
+    }
 
-    // Add your code here
-}
-
-    // Retrieve form data, validate, and insert into the database using SQLite queries
-    // Add your code here
-    printf("Handling Loans form submission\n");
+    printf("Loans data inserted successfully.\n");
 }
 
 // Function to handle the New Client form submission
@@ -163,10 +155,6 @@ void handleNewClientForm() {
     printf("New client data inserted successfully.\n");
 }
 
-    // Add your code here
-    printf("Handling New Client form submission\n");
-}
-
 // Function to display the Dashboard
 void displayDashboard() {
     // Retrieve data from the database
@@ -193,10 +181,6 @@ void displayDashboard() {
     // Display statistics
     printf("Deposit Count: %d\n", depositCount);
     // Add additional statistics or calculations based on your requirements
-}
-
-    // Add your code here
-    printf("Displaying Dashboard\n");
 }
 
 // Function to display the Client List
@@ -228,10 +212,6 @@ void displayClientList() {
     sqlite3_finalize(stmt);
 }
 
-    // Add your code here
-    printf("Displaying Client List\n");
-}
-
 // Function to handle the user login
 int handleLogin() {
     char username[100];
@@ -254,14 +234,16 @@ int handleLogin() {
         printf("Invalid username or password. Please try again.\n");
     }
 
-    if (loggedIn) {
+    return loggedIn;
+}
 
-    // Perform logimain() {
+int main() {
     // Initialize the SQLite database
     initializeDatabase();
 
     // Perform user login
-    else (!handleLogin()) {
+    int loggedIn = handleLogin();
+    if (!loggedIn) {
         printf("Login failed. Exiting...\n");
         closeDatabase();
         return 0;
@@ -273,9 +255,6 @@ int handleLogin() {
 
     // Main menu and user interface code
     // You can modify the code based on the chosen UI library
-
-    // Code for UI implementation goes here
-    // Display options to the user and handle user input
 
     int option;
     do {
@@ -320,4 +299,3 @@ int handleLogin() {
 
     return 0;
 }
-
