@@ -60,7 +60,7 @@ void handleDepositForm() {
     notes[strcspn(notes, "\n")] = '\0';
 
     // Insert the deposit data into the database using SQLite queries
-    char query[1000];
+    char query[3000];
     // In handleDepositForm function
     snprintf(query, sizeof(query), "INSERT INTO deposits (name, date, amount, notes) VALUES ('%s', '%s', %.2lf, '%s');", name, date, amount, notes);
 
@@ -104,7 +104,7 @@ void handleLoansForm() {
     }
 
     // Code to insert the Loans data into the SQLite database
-    char insertQuery[1000];
+    char insertQuery[3000];
     snprintf(insertQuery, sizeof(insertQuery), "INSERT INTO loans (name, date, amount, notes) VALUES ('%s', '%s', %.2f, '%s');", name, date, amount, notes);
 
     int rc = sqlite3_exec(db, insertQuery, 0, 0, 0);
@@ -140,7 +140,7 @@ void handleNewClientForm() {
     }
 
     // Insert data into the database
-    char insertQuery[1000];
+    char insertQuery[3000];
     sprintf(insertQuery, "INSERT INTO clients (name, address, contact) VALUES ('%s', '%s', '%s');",
             name, address, contact);
 
@@ -158,7 +158,7 @@ void handleNewClientForm() {
 // Function to display the Dashboard
 void displayDashboard() {
     // Retrieve data from the database
-    char query[1000];
+    char query[3000];
     sprintf(query, "SELECT COUNT(*) FROM deposits;");
     int depositCount = 0;
     sqlite3_stmt* stmt;
@@ -226,7 +226,7 @@ int handleLogin() {
     fgets(password, sizeof(password), stdin);
     password[strcspn(password, "\n")] = '\0';
     
-    loggedIn = 0;
+    int loggedIn = 0;
      // Validate the username and password
     if (strcmp(username, "admin") == 0 && strcmp(password, "password") == 0) {
         loggedIn = 1;
